@@ -18,19 +18,34 @@ fn main() -> ! {
     let board = Board::take().unwrap();
     let mut timer = Timer::new(board.TIMER0);
     let mut display = Display::new(board.display_pins);
-    let light_it_all = [
-        [1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1],
+
+    let mut on_off_matrix = [
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
     ];
+    let (mut row_idx, mut col_idx) = (0, 0);
 
     loop {
-        // Show light_it_all for 1000ms
-        display.show(&mut timer, light_it_all, 1000);
-        // clear the display again
+        on_off_matrix[row_idx][col_idx] = 1;
+        display.show(&mut timer, on_off_matrix, 10_u32);
+
         display.clear();
-        timer.delay_ms(1000_u32);
+        on_off_matrix[row_idx][col_idx] = 0;
+        timer.delay_ms(10_u32);
+
+        if row_idx == 0 && col_idx != 4 {
+            col_idx += 1
+        } else if row_idx != 4 && col_idx == 4 {
+            row_idx += 1
+        } else if row_idx == 4 && col_idx != 0 {
+            col_idx -= 1
+        } else if row_idx != 0 && col_idx == 0 {
+            row_idx -= 1
+        } else {
+            panic!("shit, what happened?")
+        } 
     }
 }
